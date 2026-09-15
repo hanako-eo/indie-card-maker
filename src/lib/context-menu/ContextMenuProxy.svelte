@@ -1,30 +1,17 @@
 <script lang="ts">
-import { mount, unmount } from 'svelte';
-import Wormhole from './Wormhole.svelte';
+import { Portal } from '@jsrob/svelte-portal';
 import { menu } from '../../context.svelte';
 
-$effect(() => {
-	const target: HTMLElement | null = document.querySelector("#contextmenu-container");
-	if (!target) {
-		console.error(`the element #contextmenu-container does not exist`);
-		return;
-	}
-
-	if (!menu.value) {
-		target.setAttribute("style", `display: none;`);
-		return;
-	}
-
-	target.setAttribute("style", `top: ${menu.y}px; left: ${menu.x}px;`);
-	const app = mount(Wormhole, {
-		target,
-		props: { children: menu.value },
-	});
-
-	return () => {
-		if (app) {
-			unmount(app, { outro: true });
-		}
-	};
-});
+function handle_hide_context(event: MouseEvent) {
+	if (event.type == "contextmenu")
+		event.preventDefault();
+	menu.value = null;
+}
 </script>
+
+<svelte:window onclick={handle_hide_context} oncontextmenu={handle_hide_context}></svelte:window>
+{#if menu.value}
+    <Portal target="body">
+    	<menu id="contextmenu-container" style:top="{menu.y}px" style:left="{menu.x}px">{@render menu.value()}</menu>
+    </Portal>
+{/if}

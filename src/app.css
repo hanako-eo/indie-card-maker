@@ -1,17 +1,13 @@
 @font-face {
 	font-family: determination;
-	src: url(DTM-Sans.otf);
+	src: url("./assets/DTM-Sans.otf");
 }
 
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
+  --text: #08060d;
   --bg: #fff;
   --border: #e5e4e7;
   --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
 
   letter-spacing: 0.18px;
   color-scheme: light dark;
@@ -29,14 +25,10 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
+    --text: #f3f4f6;
     --bg: #16171d;
     --border: #2e303a;
     --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
   }
 }
 
@@ -48,14 +40,17 @@ body {
 	margin: 0;
 }
 
-em, i { font-style: italic; }
-
 button {
   font-family: determination;
+  font-size: 16px;
 }
 
-/* Firefox */
-input { -moz-appearance: textfield; }
+input {
+	color: inherit;
+	/* remove arrow buttons on input number on moz */
+	-moz-appearance: textfield;
+}
+
 input:focus { outline: none; }
 input[type="file"] {
 	display: block;
@@ -65,7 +60,7 @@ input[type="file"] {
 	height: 100%;
 }
 
-/* Chrome, Safari, Edge, Opera */
+/* remove arrow buttons on input number on webkit */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
@@ -106,7 +101,6 @@ input::-webkit-inner-spin-button {
 	border: 2px solid var(--border);
 
 	text-align: center;
-	color: var(--text-h);
 
 	margin: 8px;
 	padding: 8px;
@@ -115,22 +109,6 @@ input::-webkit-inner-spin-button {
 	width: -moz-available;
 
 	font-size: 24px;
-}
-
-.card {
-	position: relative;
-	display: inline-block;
-	image-rendering: pixelated;
-
-	width: 348px;
-	height: 508px;
-
-	background: black;
-	border: 2px solid white;
-
-	color: white;
-
-	padding: 8px;
 }
 
 .clickable {

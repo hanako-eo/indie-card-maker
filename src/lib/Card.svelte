@@ -1,18 +1,20 @@
 <script lang="ts">
 import { marked } from "marked";
-import { db, type CardTable } from "../context.svelte";
+import { type CardTable } from "../context.svelte";
 import ContextMenu from "./context-menu/ContextMenu.svelte";
 import { snake_case } from "../helper";
 
-type Props = CardTable & {
+type Props = Omit<CardTable, "id" | "collection_id"> & {
 	collection_name: string,
 	collection_blob: string,
 	stat_blob: string,
+
+	onchange: (changes: Partial<CardTable>) => void,
+	onclone: () => void,
+	ondelete: () => void,
 };
 
 let {
-	id,
-	collection_id,
 	collection_name,
 	collection_blob,
 	stat_blob,
@@ -24,6 +26,10 @@ let {
 	cost,
 	attack,
 	life,
+
+	onchange,
+	onclone,
+	ondelete,
 }: Props = $props();
 
 const parsed_description = $derived(marked.parse(description));
@@ -31,7 +37,7 @@ let context_menu = $state<ContextMenu>()!;
 let description_editing = $state(false);
 
 $effect(() => {
-	update_card({
+	onchange({
 		name,
 		cost,
 		attack,
@@ -43,13 +49,9 @@ function show_image(event: Event & { currentTarget: HTMLInputElement }) {
 	var reader = new FileReader();
 	reader.addEventListener("load", async () => {
 		portrait_blob = reader.result as string;
-		await update_card({ portrait_blob });
+		onchange({ portrait_blob });
 	});
 	reader.readAsDataURL(event.currentTarget!.files![0]);
-}
-
-function update_card(value: Partial<CardTable>): Promise<number> {
-	return db.cards.update(id, value);
 }
 
 function handle_dblclick() {
@@ -57,7 +59,7 @@ function handle_dblclick() {
 }
 
 function handle_blur() {
-	update_card({ description });
+	onchange({ description });
 	description_editing = false;
 }
 
@@ -66,24 +68,6 @@ function handle_contextmenu(event: MouseEvent) {
 	event.stopPropagation();
 
 	context_menu.show_at(event.x, event.y);
-}
-
-function handle_clone() {
-	db.cards.add({
-		collection_id,
-
-		name,
-		description,
-		portrait_blob,
-
-		cost,
-		attack,
-		life,
-	});
-}
-
-function handle_deletion() {
-	db.cards.delete(id);
 }
 </script>
 
@@ -109,11 +93,12 @@ function handle_deletion() {
 
 
 <ContextMenu bind:this={context_menu}>
-	<li><button onclick={handle_clone}>Cloner la carte</button></li>
-	<li><button onclick={handle_deletion}>Supprimer la carte</button></li>
+	<li><button onclick={onclone}>Cloner la carte</button></li>
+	<li><button onclick={ondelete}>Supprimer la carte</button></li>
 </ContextMenu>
 
 <style>
+:global {
 	.card {
 		position: relative;
 		display: inline-block;
@@ -124,8 +109,6 @@ function handle_deletion() {
 
 		background: black;
 		border: 2px solid white;
-
-		color: white;
 
 		padding: 8px;
 	}
@@ -210,21 +193,5 @@ function handle_deletion() {
 		border: 2px solid white;
 		height: 232px;
 	}
-
-	/*.card-offgame {
-		background: white;
-		border: 2px solid black;
-
-		color: black;
-	}
-
-	.card-offgame .card-portrait {
-		border: 2px solid black;
-	}
-
-	.card-offgame .card-cost, .card-offgame .card-attack, .card-offgame .card-life {
-		padding-left: 1px;
-
-		background: url(offgame-cost-background.png) no-repeat;
-	}*/
+}
 </style>
