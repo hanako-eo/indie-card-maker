@@ -95,13 +95,15 @@ input[type="file"] {
 	background: none;
 	border: none;
 
+	text-align: center;
+	color: inherit;
+
 	width: 100%;
 	padding: 0 40px;
 	margin-bottom: 8px;
 
 	font-family: determination;
 	font-size: 24px;
-	text-align: center;
 }
 
 .card-stats {
@@ -117,8 +119,9 @@ input[type="file"] {
 	display: inline-block;
 	text-align: center;
 
-	background: none;
-	border: none;
+	background: inherit;
+	background-size: 100% 100%;
+	background-repeat: no-repeat;
 	padding-left: 2px;
 
 	width: 32px;
@@ -143,7 +146,7 @@ input[type="file"] {
 	height: 32px;
 }
 
-.card-effect { height: 196px; }
+.card-effect { height: 212px; }
 .card-effect p { margin-top: 8px; }
 
 .card-portrait, .card-effect {

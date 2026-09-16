@@ -77,7 +77,7 @@ function handle_contextmenu(event: MouseEvent) {
 		<label><input type="file" name="portrait" accept="image/*" onchange={show_image} /></label>
 	</div>
 	{#if description_editing}
-		<textarea class="card-effect" autofocus bind:value={description} onblur={handle_blur}></textarea>
+		<textarea class="card-effect" style:margin-top="8px" autofocus bind:value={description} onblur={handle_blur}></textarea>
 	{:else}
 		<div class="card-effect" ondblclick={handle_dblclick}>{@html parsed_description}</div>
 	{/if}
