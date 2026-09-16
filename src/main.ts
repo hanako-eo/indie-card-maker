@@ -5,6 +5,7 @@ import App from "./App.svelte";
 
 import card_name from "./extentions/card_name";
 
+import "./reset.css";
 import "./app.css";
 
 marked.use({

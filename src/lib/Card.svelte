@@ -1,7 +1,8 @@
 <script lang="ts">
 import { marked } from "marked";
-import { type CardTable } from "../context.svelte";
+
 import ContextMenu from "./context-menu/ContextMenu.svelte";
+import { type CardTable } from "../context.svelte";
 import { snake_case } from "../helper";
 
 type Props = Omit<CardTable, "id" | "collection_id"> & {
@@ -36,14 +37,7 @@ const parsed_description = $derived(marked.parse(description));
 let context_menu = $state<ContextMenu>()!;
 let description_editing = $state(false);
 
-$effect(() => {
-	onchange({
-		name,
-		cost,
-		attack,
-		life,
-	});
-});
+$effect(() => onchange({ name, cost, attack, life, }));
 
 function show_image(event: Event & { currentTarget: HTMLInputElement }) {
 	var reader = new FileReader();
@@ -80,9 +74,7 @@ function handle_contextmenu(event: MouseEvent) {
 		<input class="card-life" type="number" placeholder="0" style:background-image={`url(${stat_blob})`} bind:value={life} />
 	</div>
 	<div class="card-portrait" style:background-image={`url(${portrait_blob})`}>
-		<label>
-			<input type="file" name="portrait" accept="image/*" onchange={show_image} />
-		</label>
+		<label><input type="file" name="portrait" accept="image/*" onchange={show_image} /></label>
 	</div>
 	{#if description_editing}
 		<textarea class="card-effect" autofocus bind:value={description} onblur={handle_blur}></textarea>
@@ -98,100 +90,5 @@ function handle_contextmenu(event: MouseEvent) {
 </ContextMenu>
 
 <style>
-:global {
-	.card {
-		position: relative;
-		display: inline-block;
-		image-rendering: pixelated;
-
-		width: 348px;
-		height: 508px;
-
-		background: black;
-		border: 2px solid white;
-
-		padding: 8px;
-	}
-
-	.card-name {
-		display: block;
-
-		width: 100%;
-
-		background: none;
-		border: none;
-		padding: 0;
-
-		font-family: determination;
-		font-size: 32px;
-		text-align: center;
-	}
-
-	.card-stats {
-		display: grid;
-		position: absolute;
-
-		gap: 8px;
-		top: 10px;
-		left: 8px;
-	}
-
-	.card-cost, .card-attack, .card-life {
-		display: inline-block;
-		text-align: center;
-
-		background: none;
-		border: none;
-		padding: 0;
-
-		width: 32px;
-		height: 32px;
-
-		font-family: determination;
-		font-size: 32px;
-		line-height: 30px;
-	}
-
-	.card-cost { color: #00d0ff; }
-	.card-attack { color: #f0003c; }
-	.card-life { color: #0dd000; }
-
-	.card-collection {
-		position: absolute;
-
-		top: 10px;
-		right: 8px;
-
-		width: 32px;
-		height: 32px;
-	}
-
-	.card-effect {
-		overflow: scroll;
-
-		height: 200px;
-	}
-
-	textarea.card-effect {
-		font-family: determination;
-		font-size: 15px;
-	}
-
-	.card-portrait, .card-effect {
-		display: block;
-
-		width: 312px;
-
-		margin-top: 10px;
-		margin-left: auto;
-		margin-right: auto;
-
-		font-size: 16px;
-	}
-
-	.card-portrait {
-		border: 2px solid white;
-		height: 232px;
-	}
-}
+	button { padding: 8px; }
 </style>

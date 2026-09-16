@@ -1,5 +1,6 @@
 <script lang="ts">
 import { liveQuery } from 'dexie';
+
 import { db, type CollectionTable } from './context.svelte';
 import Collection from './lib/Collection.svelte';
 import ContextMenuProxy from './lib/context-menu/ContextMenuProxy.svelte';
@@ -19,7 +20,7 @@ function handle_click() {
 }
 
 function handle_collection_change(id: number, changes: Partial<CollectionTable>) {
-    db.collections.update(id, changes);
+	db.collections.update(id, changes);
 }
 
 async function handle_collection_deletion(id: number) {
@@ -32,7 +33,7 @@ async function handle_collection_deletion(id: number) {
 
 {#each $collections as collection (collection.id)}
 	<Collection
-	    onchange={(changes) => handle_collection_change(collection.id, changes)}
+		onchange={(changes) => handle_collection_change(collection.id, changes)}
 		ondelete={() => handle_collection_deletion(collection.id)}
 		{...collection} />
 {/each}

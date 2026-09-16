@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { Snippet } from "svelte";
+
 import { menu } from "../../context.svelte";
 
 const { children }: { children: Snippet } = $props();

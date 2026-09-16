@@ -1,14 +1,15 @@
 <script lang="ts">
-
-
+import { liveQuery } from "dexie";
+import { onDestroy } from "svelte";
+import { fly } from "svelte/transition";
 import { Portal } from "@jsrob/svelte-portal"
 import Pen from "@lucide/svelte/icons/pen";
 import Trash from "@lucide/svelte/icons/trash";
-import { liveQuery } from "dexie";
-import { onDestroy } from "svelte";
+
 import { db, type CardTable, type CollectionTable } from "../context.svelte";
-import Card from "./Card.svelte";
 import CollectionEditor from "./CollectionEditor.svelte";
+import Card from "./Card.svelte";
+import { prebind } from "../helper";
 
 type Props = CollectionTable & {
 	onchange: (changes: Partial<CollectionTable>) => void,
@@ -84,25 +85,25 @@ function handle_card_deletion(id: number) {
 }
 </script>
 
-{#if show_editor}
-	<Portal target="body">
-		<CollectionEditor onclose={() => show_editor = false} bind:value={stylesheet} />
-	</Portal>
-{/if}
+<Portal target="body">
+	{#if show_editor}
+		<aside class="collection-editor-sidebar" transition:fly={{ duration: 300, x: 512, opacity: 0 }}>
+			<CollectionEditor onclose={() => show_editor = false} bind:value={stylesheet} />
+		</aside>
+	{/if}
+</Portal>
 
 <section class="collection">
-	<div class="collection-portrait" style:background-image={`url(${icon_blob})`}>
-		<label>
-			<input type="file" accept="image/*" onchange={show_image.bind(null, "icon_blob")} />
-		</label>
+	<div class="collection-portrait icon" style:background-image={`url(${icon_blob})`}>
+		<label><input type="file" accept="image/*" onchange={prebind(show_image, "icon_blob")} /></label>
 	</div>
 	<input class="collection-name" bind:value={name} />
 	<div class="collection-infos">
 		<Pen class="clickable" size={32} onclick={() => show_editor = true}/>
 		<Trash class="clickable" color="red" size={32} onclick={ondelete} />
-		<div class="collection-stat clickable" style:background-image={`url(${stat_blob})`}>
+		<div class="collection-stat clickable icon" style:background-image={`url(${stat_blob})`}>
 			<label>
-				<input type="file" accept="image/*" style:position="absolute" onchange={show_image.bind(null, "stat_blob")} />
+				<input type="file" accept="image/*" style:position="absolute" onchange={prebind(show_image, "stat_blob")} />
 				{size}
 			</label>
 		</div>
@@ -126,17 +127,16 @@ function handle_card_deletion(id: number) {
 
 
 <style>
-	.card-adder {
-		background-color: var(--border);
-		border: 2px solid var(--border);
+	.collection {
+		display: flex;
 
-		font-size: 24px;
-		text-align: center;
+		justify-content: space-between;
+		align-items: center;
 
-		user-select: none;
-		cursor: pointer;
+		gap: 8px;
 	}
 
+	.cards { margin: 8px; }
 	.cards, .collection-infos {
 		display: flex;
 
@@ -147,27 +147,20 @@ function handle_card_deletion(id: number) {
 		gap: 8px;
 	}
 
-	.cards {
-		margin: 8px;
-	}
+	.card-adder {
+		background-color: var(--light-background);
+		border: 4px solid var(--border);
 
-	.collection {
-		display: flex;
+		font-size: 24px;
+		text-align: center;
 
-		justify-content: space-between;
-		align-items: center;
-
-		gap: 8px;
+		user-select: none;
+		cursor: pointer;
 	}
 
 	.collection-portrait, .collection-stat {
 		display: inline-block;
-
-		background-size: 32px;
 		image-rendering: pixelated;
-
-		width: 32px;
-		height: 32px;
 	}
 
 	.collection-stat {
@@ -193,5 +186,24 @@ function handle_card_deletion(id: number) {
 
 		font-family: determination;
 		font-size: 32px;
+	}
+
+	.collection-editor-sidebar {
+		position: absolute;
+		z-index: 2;
+
+		overflow: scroll;
+
+		background-color: var(--border);
+		border: 2px solid var(--code-bg);
+
+		width: 512px;
+		max-width: 512px;
+
+		padding: 8px;
+
+		top: 0;
+		bottom: 0;
+		right: 0;
 	}
 </style>
