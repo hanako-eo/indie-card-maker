@@ -150,6 +150,7 @@ input[type="file"] {
 .card-effect p { margin-top: 8px; }
 
 .card-portrait, .card-effect {
+	box-sizing: border-box;
 	display: block;
 
 	width: 312px;
