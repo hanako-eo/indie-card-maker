@@ -115,7 +115,7 @@ input[type="file"] {
 	left: 8px;
 }
 
-.card-cost, .card-attack, .card-life {
+.card-stats .card-cost, .card-stats .card-attack, .card-stats .card-life {
 	display: inline-block;
 	text-align: center;
 
@@ -135,6 +135,7 @@ input[type="file"] {
 .card-cost { color: #00d0ff; }
 .card-attack { color: #f0003c; }
 .card-life { color: #0dd000; }
+.card-damage { color: goldenrod; }
 
 .card-collection {
 	position: absolute;

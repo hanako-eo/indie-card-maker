@@ -14,3 +14,20 @@ export function snake_case(str: string): string {
 export function prebind<A extends any[], B extends any[], R>(f: (...args: [...A, ...B]) => R, ...args1: A): (...args2: B) => R {
 	return (...args2: B) => f(...args1, ...args2);
 }
+
+export function download<S extends object>(filename: string, data: S) {
+	const blob = new Blob([JSON.stringify(data)], { type: "text/json" });
+	const url = URL.createObjectURL(blob);
+
+	const a = document.createElement("a");
+	a.href = url;
+	a.download = filename;
+
+	// Append to the DOM (required for older browsers)
+	document.body.appendChild(a);
+	a.click();
+
+	// Cleanup: Revoke the temporary URL and remove the element
+	URL.revokeObjectURL(url);
+	document.body.removeChild(a);
+}

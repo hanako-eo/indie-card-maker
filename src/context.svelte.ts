@@ -1,6 +1,7 @@
 import Dexie, { type EntityTable } from "dexie";
 import { type Snippet } from "svelte";
 
+
 export interface CollectionTable {
 	id: number,
 
@@ -24,6 +25,12 @@ export interface CardTable {
 	attack: number,
 	life: number,
 }
+
+export type CollectionSerialization = Omit<CollectionTable, "id"> & {
+	cards: Array<CardSerialization>
+}
+
+export type CardSerialization = Omit<CardTable, "id" | "collection_id">
 
 export const menu = $state<{ value: Snippet | null, x: number, y: number }>({ value: null, x: 0, y: 0 });
 export const db = new Dexie("indie_cards_local_db") as Dexie & {

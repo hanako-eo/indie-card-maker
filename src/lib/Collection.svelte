@@ -3,13 +3,12 @@ import { liveQuery } from "dexie";
 import { onDestroy } from "svelte";
 import { fly } from "svelte/transition";
 import { Portal } from "@jsrob/svelte-portal"
-import Pen from "@lucide/svelte/icons/pen";
-import Trash from "@lucide/svelte/icons/trash";
+import { Upload, Download, Pen, Trash } from '@lucide/svelte';
 
-import { db, type CardTable, type CollectionTable } from "../context.svelte";
+import { db, type CardTable, type CollectionSerialization, type CollectionTable } from "../context.svelte";
 import CollectionEditor from "./CollectionEditor.svelte";
 import Card from "./Card.svelte";
-import { prebind } from "../helper";
+import { download, prebind } from "../helper";
 
 type Props = CollectionTable & {
 	onchange: (changes: Partial<CollectionTable>) => void,
@@ -37,7 +36,7 @@ onDestroy(() => {
 })
 
 function show_image(blob_key: "icon_blob" | "stat_blob", event: Event & { currentTarget: HTMLInputElement }) {
-	var reader = new FileReader();
+	const reader = new FileReader();
 	reader.addEventListener("load", async () => {
 		const value = reader.result as string
 		if (blob_key == "icon_blob") icon_blob = value;
@@ -66,7 +65,7 @@ function handle_card_change(id: number, value: Partial<CardTable>) {
 	db.cards.update(id, value);
 }
 
-function handle_card_clone(card: CardTable) {
+function handle_card_clone(card: Omit<CardTable, "id">) {
 	db.cards.add({
 		collection_id: card.collection_id,
 
@@ -82,6 +81,35 @@ function handle_card_clone(card: CardTable) {
 
 function handle_card_deletion(id: number) {
 	db.cards.delete(id);
+}
+
+function handle_upload(event: Event & { currentTarget: HTMLInputElement }) {
+	const reader = new FileReader();
+	reader.addEventListener("load", async () => {
+		const data: CollectionSerialization = JSON.parse(reader.result as string);
+
+		db.cards.bulkAdd(data.cards.map((card) => ({ ...card, collection_id: id })));
+	});
+	reader.readAsText(event.currentTarget!.files![0]);
+}
+
+function handle_download() {
+	download<CollectionSerialization>(`${name}.collection-data`, {
+		name,
+		icon_blob,
+		stat_blob,
+		stylesheet,
+
+		cards: $cards.map((card) => ({
+			name: card.name,
+			description: card.description,
+			portrait_blob: card.portrait_blob,
+
+			cost: card.cost,
+			attack: card.attack,
+			life: card.life,
+		})),
+	});
 }
 </script>
 
@@ -99,6 +127,11 @@ function handle_card_deletion(id: number) {
 	</div>
 	<input class="collection-name" bind:value={name} />
 	<div class="collection-infos">
+		<Download class="clickable" size={32} onclick={handle_download} />
+		<div class="collection-upload">
+			<Upload size={32} />
+			<label class="clickable" style:position="absolute"><input type="file" accept=".collection-data" onchange={handle_upload} /></label>
+		</div>
 		<Pen class="clickable" size={32} onclick={() => show_editor = true}/>
 		<Trash class="clickable" color="red" size={32} onclick={ondelete} />
 		<div class="collection-stat clickable icon" style:background-image={`url(${stat_blob})`}>
@@ -163,7 +196,7 @@ function handle_card_deletion(id: number) {
 		image-rendering: pixelated;
 	}
 
-	.collection-stat {
+	.collection-stat, .collection-upload {
 		position: relative;
 		display: inline-block;
 		text-align: center;
@@ -173,6 +206,13 @@ function handle_card_deletion(id: number) {
 
 		line-height: 30px;
 		font-size: 32px;
+	}
+
+	.collection-upload label {
+		top: 0;
+		bottom: 0;
+		right: 0;
+		left: 0;
 	}
 
 	.collection-name {
