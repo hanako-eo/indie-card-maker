@@ -8,6 +8,7 @@ import ContextMenuProxy from './lib/context-menu/ContextMenuProxy.svelte';
 
 import default_icon_blob from "./assets/default-collection.png"
 import default_stat_blob from "./assets/default-stat.png"
+import { file_content } from './helper';
 
 const collections = liveQuery(async () => db.collections.toArray());
 
@@ -29,15 +30,14 @@ async function handle_collection_deletion(id: number) {
 	await db.collections.delete(id);
 }
 
-function handle_upload(event: Event & { currentTarget: HTMLInputElement }) {
-	const reader = new FileReader();
-	reader.addEventListener("load", async () => {
-		const { cards, ...data }: CollectionSerialization = JSON.parse(reader.result as string);
+async function handle_upload(event: Event & { currentTarget: HTMLInputElement }) {
+	const files = event.currentTarget!.files;
+	if (files === null) return;
 
-		const collection_id = await db.collections.add(data);
-		db.cards.bulkAdd(cards.map((card) => ({ ...card, collection_id })));
-	});
-	reader.readAsText(event.currentTarget!.files![0]);
+	const { cards, ...data }: CollectionSerialization = JSON.parse(await file_content("text", files[0]));
+
+	const collection_id = await db.collections.add(data);
+	db.cards.bulkAdd(cards.map((card) => ({ ...card, collection_id })));
 }
 </script>
 
@@ -50,7 +50,7 @@ function handle_upload(event: Event & { currentTarget: HTMLInputElement }) {
 		{...collection} />
 {/each}
 
-<div class="collection collection-adder">
+<div class="collection-adder">
 	<div></div>
 	<button class="clickable" onclick={handle_click}>+ Créer une collection.</button>
 	<div class="collection-upload">
@@ -60,10 +60,24 @@ function handle_upload(event: Event & { currentTarget: HTMLInputElement }) {
 </div>
 
 <style>
-	.collection {
+	.collection-adder {
 		display: flex;
 
 		justify-content: space-between;
+
+		background-color: var(--light-background);
+		border: 4px solid var(--border);
+		border-radius: 8px;
+
+		text-align: center;
+
+		margin: 16px;
+		padding: 16px;
+
+		width: -webkit-fill-available;
+		width: -moz-available;
+
+		font-size: 24px;
 	}
 
 	button {
