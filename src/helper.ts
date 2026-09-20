@@ -15,6 +15,30 @@ export function prebind<A extends any[], B extends any[], R>(f: (...args: [...A,
 	return (...args2: B) => f(...args1, ...args2);
 }
 
+interface ContentType {
+	text: string,
+	data_url: string,
+	bytes: ArrayBuffer,
+}
+export function file_content<K extends keyof ContentType>(key: K, file: File): Promise<ContentType[K]> {
+	return new Promise((resolve, reject) => {
+		const reader = new FileReader();
+		reader.addEventListener("load", async () => resolve(reader.result as ContentType[K]));
+		reader.addEventListener("error", reject);
+		switch (key) {
+			case "text":
+				reader.readAsText(file);
+				break;
+			case "data_url":
+				reader.readAsDataURL(file);
+				break;
+			case "bytes":
+				reader.readAsArrayBuffer(file);
+				break;
+		}
+	});
+}
+
 export function download<S extends object>(filename: string, data: S) {
 	const blob = new Blob([JSON.stringify(data)], { type: "text/json" });
 	const url = URL.createObjectURL(blob);

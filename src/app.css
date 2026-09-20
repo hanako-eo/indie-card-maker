@@ -1,19 +1,18 @@
 @font-face {
 	font-family: determination;
-	src: url("./assets/DTM-Sans.otf");
+	src: url("./assets/DTM-Sans.otf") format("truetype");
 }
 
 :root {
-	--text: #ffffff;
-	--bg: #16171d;
-	--light-background: #2e303a;
-	--border: #1f2028;
+	--text: #F5F5F5;
+	--background: #222831;
+	--light-background: #393E467F;
+	--border: #F5F5F5;
 
-	letter-spacing: 0.18px;
 	color-scheme: light dark;
+	interpolate-size: allow-keywords;
 	color: var(--text);
-	background: var(--bg);
-	font-synthesis: none;
+	background: var(--background);
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
@@ -37,31 +36,34 @@ input[type="file"] {
 
 	flex-wrap: wrap;
 	flex-direction: column;
-	align-items: flex-start;
+	align-items: stretch;
 	align-content: flex-start;
 
-	background-color: var(--light-background);
+	margin: 0;
+
+	background-color: var(--background);
 	border: 4px solid var(--border);
-	border-radius: 4px;
+	border-radius: 8px;
 
 	font-size: 20px;
-
-	margin: 0;
 }
 
-.collection {
-	background-color: var(--light-background);
-	border: 4px solid var(--border);
-
-	text-align: center;
-
-	margin: 8px;
+#contextmenu-container button {
+	background: none;
+	text-align: start;
 	padding: 8px;
 
 	width: -webkit-fill-available;
 	width: -moz-available;
+}
 
-	font-size: 24px;
+hr.vl {
+	display: inline-block;
+
+	border: thin solid white;
+
+	margin: 0 12px;
+	height: 32px;
 }
 
 .clickable { cursor: pointer; }
@@ -71,11 +73,12 @@ input[type="file"] {
 	height: 32px;
 
 	background-repeat: no-repeat;
-	background-size: 100% 100%;
+	background-size: 100%;
+	background-position: center;
 }
 
 
-.card {
+/*.card {
 	position: relative;
 	display: inline-block;
 	image-rendering: pixelated;
@@ -85,22 +88,17 @@ input[type="file"] {
 
 	background: black;
 	border: 2px solid white;
-
-	padding: 8px;
 }
 
 .card-name {
-	display: block;
-
 	background: none;
-	border: none;
 
 	text-align: center;
 	color: inherit;
 
 	width: 100%;
+	height: 40px;
 	padding: 0 40px;
-	margin-bottom: 8px;
 
 	font-family: determination;
 	font-size: 24px;
@@ -147,30 +145,37 @@ input[type="file"] {
 	height: 32px;
 }
 
-.card-effect { height: 212px; }
-.card-effect p { margin-top: 8px; }
 
-.card-portrait, .card-effect {
-	box-sizing: border-box;
+.card-inner {
+	display: grid;
+	gap: 2px;
+}
+
+.card-portrait, .card-archetypes, .card-effect {
 	display: block;
 
+	outline: 2px solid white;
 	width: 312px;
 
 	margin-left: auto;
 	margin-right: auto;
-
-	font-size: 16px;
 }
 
 .card-portrait {
 	background-repeat: no-repeat;
 	background-size: 100% 100%;
-	border: 2px solid white;
 
 	height: 232px;
+}
+
+.card-archetypes {
+	height: 24px;
+}
+.card-effect {
+	height: 184px;
 }
 
 .card-name-effect {
 	text-decoration: underline;
 	color: #00d0ff;
-}
+}*/

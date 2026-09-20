@@ -3,9 +3,7 @@ import { Portal } from '@jsrob/svelte-portal';
 
 import { menu } from '../../context.svelte';
 
-function handle_hide_context(event: MouseEvent) {
-	if (event.type == "contextmenu")
-		event.preventDefault();
+function handle_hide_context(_event: MouseEvent) {
 	menu.value = null;
 }
 </script>
