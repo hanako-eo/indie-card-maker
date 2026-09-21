@@ -17,7 +17,11 @@ function handle_click() {
 		name: "Nouvelle Collection",
 		icon_blob: default_icon_blob,
 		stat_blob: default_stat_blob,
-		stylesheet: "",
+		style: {
+			background: { type: "color", value: "black" },
+			border_color: "white",
+			color: "white",
+		},
 	});
 }
 
@@ -54,7 +58,7 @@ async function handle_upload(event: Event & { currentTarget: HTMLInputElement })
 	<div></div>
 	<button class="clickable" onclick={handle_click}>+ Créer une collection.</button>
 	<div class="collection-upload">
-		<Upload size={32} />
+		<Upload />
 		<label class="clickable" style:position="absolute"><input type="file" accept=".collection-data" onchange={handle_upload} /></label>
 	</div>
 </div>

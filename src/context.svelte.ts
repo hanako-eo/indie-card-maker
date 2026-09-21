@@ -1,8 +1,9 @@
 import Dexie, { type EntityTable } from "dexie";
 import { type Snippet } from "svelte";
 
+type Migrate<From, To> = Partial<From> & To;
 
-export interface CollectionTable {
+interface CollectionTableV1 {
 	id: number,
 
 	name: string,
@@ -12,7 +13,16 @@ export interface CollectionTable {
 	stylesheet: string,
 }
 
-export interface CardTable {
+export interface CollectionStyle {
+	background: { type: "color" | "image", value: string },
+	border_color: string,
+	color: string,
+}
+export type CollectionTable = Omit<CollectionTableV1, "stylesheet"> & {
+	style: CollectionStyle,
+}
+
+interface CardTableV1 {
 	id: number,
 
 	collection_id: number,
@@ -24,6 +34,10 @@ export interface CardTable {
 	cost: number,
 	attack: number,
 	life: number,
+}
+
+export type CardTable = CardTableV1 & {
+	archetypes: string,
 }
 
 export type CollectionSerialization = Omit<CollectionTable, "id"> & {
@@ -41,4 +55,21 @@ export const db = new Dexie("indie_cards_local_db") as Dexie & {
 db.version(1).stores({
 	collections: "++id, name, icon_blob, stat_blob, stylesheet",
 	cards: "++id, collection_id, name, description, portrait_blob, cost, attack, life",
+})
+
+db.version(2).stores({
+	collections: "++id, name, icon_blob, stat_blob, style",
+	cards: "++id, collection_id, name, archetypes, description, portrait_blob, cost, attack, life",
+}).upgrade(async (tx) => {
+	await tx.table<Migrate<CardTableV1, CardTable>>("cards").toCollection().modify((card) => {
+		card.archetypes = "";
+	});
+	await tx.table<Migrate<CollectionTableV1, CollectionTable>>("collections").toCollection().modify((collection) => {
+		collection.style = {
+			background: { type: "color", value: "black" },
+			border_color: "white",
+			color: "white",
+		};
+		delete collection.stylesheet;
+	});
 })
