@@ -21,6 +21,7 @@ let {
 	stat_blob,
 
 	name,
+	archetypes,
 	description,
 	portrait_blob,
 
@@ -39,7 +40,7 @@ const reactive = $derived(!!onclone || !!ondelete);
 let context_menu = $state<ContextMenu>()!;
 let description_editing = $state(false);
 
-$effect(() => onchange?.({ name, cost, attack, life, }));
+$effect(() => onchange?.({ name, archetypes, cost, attack, life }));
 
 async function show_image(event: Event & { currentTarget: HTMLInputElement }) {
 	const files = event.currentTarget.files;
@@ -82,11 +83,11 @@ function handle_contextmenu(event: MouseEvent) {
 		<input class="card-life" type="number" placeholder="0" style:background-image={`url(${stat_blob})`} bind:value={life} />
 	</div>
 	<div class="card-inner">
-		<input class="card-name" bind:value={name} />
+		<input class="card-name" placeholder="Card Name" bind:value={name} />
 		<div class="card-portrait" style:background-image={`url(${portrait_blob})`}>
 			<label><input type="file" name="portrait" accept="image/*" onchange={show_image} /></label>
 		</div>
-		<input class="card-archetypes" />
+		<input class="card-archetypes" placeholder="Archetypes" bind:value={archetypes} />
 		{#if description_editing}
 			<textarea class="card-effect" autofocus bind:value={description} onblur={handle_blur}></textarea>
 		{:else}
@@ -96,10 +97,10 @@ function handle_contextmenu(event: MouseEvent) {
 </div>
 
 <ContextMenu bind:this={context_menu}>
-	{#if !onclone}
+	{#if onclone}
 		<li><button onclick={onclone}>Cloner la carte</button></li>
 	{/if}
-	{#if !ondelete}
+	{#if ondelete}
 		<li><button onclick={ondelete}>Supprimer la carte</button></li>
 	{/if}
 </ContextMenu>
@@ -217,9 +218,12 @@ function handle_contextmenu(event: MouseEvent) {
 	}
 
 :global {
-	.card-name-effect {
-		font-style: italic;
+	.card-keyword {
 		text-decoration: underline;
+	}
+	.card-name-effect {
+		color: #BB62F3;
+		font-style: italic;
 	}
 
 	.card-cost { color: #00d0ff; }

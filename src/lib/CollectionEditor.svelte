@@ -1,24 +1,22 @@
 <script lang="ts">
-import CodeMirror from "svelte-codemirror-editor";
-import { css } from "@codemirror/lang-css";
-import { oneDark } from "@codemirror/theme-one-dark";
+import type { CollectionStyle } from "../context.svelte";
 
-interface Props {
-	value: string,
+type Props = CollectionStyle & {
+	collection_name: string,
 	onclose: () => void,
 }
 
-let { value = $bindable(), onclose }: Props = $props();
+let { background, border_color, color, collection_name, onclose }: Props = $props();
 </script>
 
-<h2>Modifier le style des cartes.</h2>
-<CodeMirror class="collection-editor" bind:value={value} lang={css()} theme={oneDark} styles={{
+<h2>Editer l'apparence des cartes de {collection_name}.</h2>
+<!-- <CodeMirror class="collection-editor" bind:value={value} lang={css()} theme={oneDark} styles={{
 	"&": {
 		width: "100%",
 		height: "50rem",
 		maxHeight: "100%",
 	},
-}}/>
+}}/> -->
 <button class="clickable" onclick={onclose}>Fermer</button>
 
 <style>

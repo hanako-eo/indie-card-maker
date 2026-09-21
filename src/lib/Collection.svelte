@@ -15,7 +15,7 @@ type Props = CollectionTable & {
 	ondelete: () => void,
 };
 
-let { id, name, icon_blob, stat_blob, stylesheet, onchange, ondelete }: Props = $props();
+let { id, name, icon_blob, stat_blob, style, onchange, ondelete }: Props = $props();
 
 const cards = liveQuery(() => db.cards.where({ collection_id: id }).toArray());
 const size = $derived($cards?.length ?? 0);
@@ -23,18 +23,18 @@ const size = $derived($cards?.length ?? 0);
 let show_content = $state(true);
 let show_editor = $state(false);
 
-const cssstylesheet = new CSSStyleSheet();
-document.adoptedStyleSheets.push(cssstylesheet);
+// const cssstylesheet = new CSSStyleSheet();
+// document.adoptedStyleSheets.push(cssstylesheet);
 
-$effect(() => {
-	cssstylesheet.replaceSync(stylesheet);
-	onchange({ stylesheet });
-});
+// $effect(() => {
+// 	cssstylesheet.replaceSync(stylesheet);
+// 	onchange({ stylesheet });
+// });
 $effect(() => onchange({ name }));
 
-onDestroy(() => {
-	document.adoptedStyleSheets = document.adoptedStyleSheets.filter((s) => s != cssstylesheet);
-})
+// onDestroy(() => {
+// 	document.adoptedStyleSheets = document.adoptedStyleSheets.filter((s) => s != cssstylesheet);
+// })
 
 async function show_image(blob_key: "icon_blob" | "stat_blob", event: Event & { currentTarget: HTMLInputElement }) {
 	const files = event.currentTarget!.files;
@@ -53,6 +53,7 @@ function handle_add_card() {
 		collection_id: id,
 
 		name: "Nouvelle Carte",
+		archetypes: "",
 		description: "",
 		portrait_blob: "",
 
@@ -71,6 +72,7 @@ function handle_card_clone(card: Omit<CardTable, "id">) {
 		collection_id: card.collection_id,
 
 		name: card.name,
+		archetypes: card.archetypes,
 		description: card.description,
 		portrait_blob: card.portrait_blob,
 
@@ -97,10 +99,11 @@ function handle_download() {
 		name,
 		icon_blob,
 		stat_blob,
-		stylesheet,
+		style,
 
 		cards: $cards.map((card) => ({
 			name: card.name,
+			archetypes: card.archetypes,
 			description: card.description,
 			portrait_blob: card.portrait_blob,
 
@@ -115,7 +118,7 @@ function handle_download() {
 <Portal target="body">
 	{#if show_editor}
 		<aside class="collection-editor-sidebar" transition:fly={{ duration: 300, x: 512, opacity: 0 }}>
-			<CollectionEditor onclose={() => show_editor = false} bind:value={stylesheet} />
+			<CollectionEditor collection_name={name} onclose={() => show_editor = false} {...style} />
 		</aside>
 	{/if}
 </Portal>
