@@ -114,8 +114,9 @@ function handle_contextmenu(event: MouseEvent) {
 		width: 348px;
 		height: 508px;
 
-		background: black;
-		border: 4px solid white;
+		background: var(--card-background, black);
+		border: 4px solid var(--card-border, white);
+		color: var(--card-color, white);
 	}
 
 	.card-inner {
@@ -181,7 +182,7 @@ function handle_contextmenu(event: MouseEvent) {
 	.card-portrait, .card-archetypes, .card-effect {
 		display: block;
 
-		outline: 2px solid white;
+		outline: 2px solid var(--card-border, white);
 		width: 312px;
 	}
 
@@ -204,8 +205,12 @@ function handle_contextmenu(event: MouseEvent) {
 	.card-effect {
 		display: flex;
 
+		flex-direction: column;
+		flex-wrap: nowrap;
 		justify-content: center;
 		align-items: center;
+
+		gap: 8px;
 
 		background: none;
 		resize: none;

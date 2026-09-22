@@ -5,7 +5,7 @@ import { fly } from "svelte/transition";
 import { Portal } from "@jsrob/svelte-portal"
 import { Upload, Download, Plus, Pen, Trash, ChevronDown } from '@lucide/svelte';
 
-import { db, type CardTable, type CollectionSerialization, type CollectionTable } from "../context.svelte";
+import { db, type CardTable, type CollectionSerialization, type CollectionStyle, type CollectionTable } from "../context.svelte";
 import CollectionEditor from "./CollectionEditor.svelte";
 import Card from "./Card.svelte";
 import { download, file_content, prebind } from "../helper";
@@ -16,6 +16,7 @@ type Props = CollectionTable & {
 };
 
 let { id, name, icon_blob, stat_blob, style, onchange, ondelete }: Props = $props();
+const css_background = $derived(style.background.type == "color" ? style.background.value : `url(${style.background.value})`);
 
 const cards = liveQuery(() => db.cards.where({ collection_id: id }).toArray());
 const size = $derived($cards?.length ?? 0);
@@ -113,12 +114,28 @@ function handle_download() {
 		})),
 	});
 }
+
+function handle_editor_change(changes: CollectionStyle) {
+	onchange?.({ style: changes })
+	style = changes;
+	show_editor = false;
+}
+
+function handle_editor_close() {
+	show_editor = false;
+}
 </script>
 
 <Portal target="body">
 	{#if show_editor}
 		<aside class="collection-editor-sidebar" transition:fly={{ duration: 300, x: 512, opacity: 0 }}>
-			<CollectionEditor collection_name={name} onclose={() => show_editor = false} {...style} />
+			<CollectionEditor
+				onchange={handle_editor_change}
+				onclose={handle_editor_close}
+				collection_name={name}
+				collection_blob={icon_blob}
+				{stat_blob}
+				{...style} />
 		</aside>
 	{/if}
 </Portal>
@@ -151,7 +168,7 @@ function handle_download() {
 		</div>
 	</nav>
 	<hr />
-	<section class="cards">
+	<section class="cards" style:--card-background={css_background} style:--card-border={style.border_color} style:--card-color={style.color}>
 		{#each $cards as card (card.id)}
 			<Card
 				onchange={(changes) => handle_card_change(card.id, changes)}
