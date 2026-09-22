@@ -19,12 +19,10 @@
     "vite": "^8.3.0"
   },
   "dependencies": {
-    "@codemirror/lang-css": "^6.3.1",
-    "@codemirror/theme-one-dark": "^6.1.3",
     "@jsrob/svelte-portal": "^0.2.1",
     "@lucide/svelte": "^1.45.0",
     "dexie": "^4.4.6",
     "marked": "^18.0.13",
-    "svelte-codemirror-editor": "^2.1.0"
+    "svelte-awesome-color-picker": "^4.1.3"
   }
 }
