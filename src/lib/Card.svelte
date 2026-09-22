@@ -136,6 +136,7 @@ function handle_contextmenu(event: MouseEvent) {
 		width: 252px;
 		height: 40px;
 
+		color: inherit;
 		font-size: 24px;
 		text-align: center;
 	}
@@ -182,6 +183,7 @@ function handle_contextmenu(event: MouseEvent) {
 	.card-portrait, .card-archetypes, .card-effect {
 		display: block;
 
+		color: inherit;
 		outline: 2px solid var(--card-border, white);
 		width: 312px;
 	}

@@ -17,12 +17,15 @@ type Props = CollectionStyle & {
 }
 
 let { background, border_color, color, collection_name, collection_blob, stat_blob, onchange, onclose }: Props = $props();
-let background_type = $derived(background.type);
-let background_value = $derived(background.value);
+let background_type = $state(background.type);
+let background_value = $state(background.value);
 
 const css_background = $derived(background_type == "color" ? background_value : `url(${background_value})`);
 
 $effect.pre(() => {
+	if (background.type == background_type)
+		return;
+
 	if (background_type == "color")
 		background_value = "black";
 });
