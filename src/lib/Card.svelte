@@ -1,5 +1,6 @@
 <script lang="ts">
 import { marked } from "marked";
+import fitText from "@activetheory/fit-text";
 
 import ContextMenu from "./context-menu/ContextMenu.svelte";
 import { type CardTable } from "../context.svelte";
@@ -37,10 +38,24 @@ let {
 const parsed_description = $derived(marked.parse(description));
 const reactive = $derived(!!onclone || !!ondelete);
 
+let description_holder = $state<HTMLDivElement>();
+let description_box = $state<HTMLDivElement>();
+
 let context_menu = $state<ContextMenu>()!;
 let description_editing = $state(false);
 
 $effect(() => onchange?.({ name, archetypes, cost, attack, life }));
+
+$effect(() => {
+	if (!description_holder)
+		return;
+
+	fitText({
+		el: description_holder,
+		box: description_box,
+		maxHeightLimit: 184,
+	});
+});
 
 async function show_image(event: Event & { currentTarget: HTMLInputElement }) {
 	const files = event.currentTarget.files;
@@ -91,7 +106,11 @@ function handle_contextmenu(event: MouseEvent) {
 		{#if description_editing}
 			<textarea class="card-effect" autofocus bind:value={description} onblur={handle_blur}></textarea>
 		{:else}
-			<div class="card-effect" ondblclick={handle_dblclick} role="contentinfo">{@html parsed_description}</div>
+			<div class="card-effect" ondblclick={handle_dblclick} role="contentinfo" bind:this={description_box}>
+				<div class="card-effect-holder" bind:this={description_holder}>
+					{@html parsed_description}
+				</div>
+			</div>
 		{/if}
 	</div>
 </div>
@@ -139,6 +158,7 @@ function handle_contextmenu(event: MouseEvent) {
 		color: inherit;
 		font-size: 24px;
 		text-align: center;
+		text-fit: shrink;
 	}
 
 	.card-stats {
@@ -205,23 +225,26 @@ function handle_contextmenu(event: MouseEvent) {
 	}
 
 	.card-effect {
+		height: 184px;
+		padding: 4px;
+
+		font-size: 15px;
+	}
+
+	.card-effect-holder {
 		display: flex;
 
 		flex-direction: column;
 		flex-wrap: nowrap;
 		justify-content: center;
-		align-items: center;
+		align-items: start;
 
 		gap: 8px;
 
 		background: none;
 		resize: none;
 
-		height: 184px;
-		padding: 4px;
-
 		text-align: justify;
-		font-size: 15px;
 	}
 
 :global {
@@ -237,5 +260,10 @@ function handle_contextmenu(event: MouseEvent) {
 	.card-attack { color: #f0003c; }
 	.card-life { color: #0dd000; }
 	.card-damage { color: goldenrod; }
+
+	.card-effect ul {
+		list-style: disc;
+		padding-left: 12px;
+	}
 }
 </style>

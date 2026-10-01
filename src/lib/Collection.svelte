@@ -1,6 +1,5 @@
 <script lang="ts">
 import { liveQuery } from "dexie";
-import { onDestroy } from "svelte";
 import { fly } from "svelte/transition";
 import { Portal } from "@jsrob/svelte-portal"
 import { Upload, Download, Plus, Pen, Trash, ChevronDown } from '@lucide/svelte';
@@ -8,7 +7,7 @@ import { Upload, Download, Plus, Pen, Trash, ChevronDown } from '@lucide/svelte'
 import { db, type CardTable, type CollectionSerialization, type CollectionStyle, type CollectionTable } from "../context.svelte";
 import CollectionEditor from "./CollectionEditor.svelte";
 import Card from "./Card.svelte";
-import { download, file_content, prebind } from "../helper";
+import { debounce, download, file_content, prebind } from "../helper";
 
 type Props = CollectionTable & {
 	onchange: (changes: Partial<CollectionTable>) => void,
@@ -24,18 +23,7 @@ const size = $derived($cards?.length ?? 0);
 let show_content = $state(true);
 let show_editor = $state(false);
 
-// const cssstylesheet = new CSSStyleSheet();
-// document.adoptedStyleSheets.push(cssstylesheet);
-
-// $effect(() => {
-// 	cssstylesheet.replaceSync(stylesheet);
-// 	onchange({ stylesheet });
-// });
 $effect(() => onchange({ name }));
-
-// onDestroy(() => {
-// 	document.adoptedStyleSheets = document.adoptedStyleSheets.filter((s) => s != cssstylesheet);
-// })
 
 async function show_image(blob_key: "icon_blob" | "stat_blob", event: Event & { currentTarget: HTMLInputElement }) {
 	const files = event.currentTarget!.files;
@@ -65,6 +53,7 @@ function handle_add_card() {
 }
 
 function handle_card_change(id: number, value: Partial<CardTable>) {
+	console.log("pppp")
 	db.cards.update(id, value);
 }
 
@@ -171,7 +160,7 @@ function handle_editor_close() {
 	<section class="cards" style:--card-background={css_background} style:--card-border={style.border_color} style:--card-color={style.color}>
 		{#each $cards as card (card.id)}
 			<Card
-				onchange={(changes) => handle_card_change(card.id, changes)}
+				onchange={debounce((changes) => handle_card_change(card.id, changes), 1000)}
 				onclone={() => handle_card_clone(card)}
 				ondelete={() => handle_card_deletion(card.id)}
 				collection_name={name}
@@ -264,7 +253,7 @@ function handle_editor_close() {
 	}
 
 	.collection-editor-sidebar {
-		position: absolute;
+		position: fixed;
 		z-index: 2;
 
 		overflow: scroll;

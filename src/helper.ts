@@ -55,3 +55,14 @@ export function download<S extends object>(filename: string, data: S) {
 	URL.revokeObjectURL(url);
 	document.body.removeChild(a);
 }
+
+// Debounce function
+export function debounce<A extends any[]>(func: (...args: A) => void, delay: number) {
+    let timeout: number;
+	return function (...args: A) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+            func(...args);
+        }, delay);
+    };
+}
