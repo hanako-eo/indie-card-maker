@@ -36,8 +36,20 @@ interface CardTableV1 {
 	life: number,
 }
 
-export type CardTable = CardTableV1 & {
+type CardTableV2 = CardTableV1 & {
 	archetypes: string,
+}
+
+export enum CardRarity {
+	Token = "token",
+	Common = "common",
+	Uncommon = "uncommon",
+	Rare = "rare",
+	Legendary = "legendary",
+	Hero = "hero",
+}
+export type CardTable = CardTableV2 & {
+	rarity: CardRarity,
 }
 
 export type CollectionSerialization = Omit<CollectionTable, "id"> & {
@@ -55,7 +67,7 @@ export const db = new Dexie("indie_cards_local_db") as Dexie & {
 db.version(1).stores({
 	collections: "++id, name, icon_blob, stat_blob, stylesheet",
 	cards: "++id, collection_id, name, description, portrait_blob, cost, attack, life",
-})
+});
 
 db.version(2).stores({
 	collections: "++id, name, icon_blob, stat_blob, style",
@@ -72,4 +84,12 @@ db.version(2).stores({
 		};
 		delete collection.stylesheet;
 	});
-})
+});
+
+db.version(3).stores({
+	cards: "++id, collection_id, name, rarity, archetypes, description, portrait_blob, cost, attack, life",
+}).upgrade(async (tx) => {
+	await tx.table<Migrate<CardTableV2, CardTable>>("cards").toCollection().modify((card) => {
+		card.rarity = CardRarity.Common;
+	});
+});

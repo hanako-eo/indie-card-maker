@@ -1,12 +1,15 @@
 <script lang="ts">
+// TODO: add card type for creatures and spells
 import { marked } from "marked";
 import fitText from "@activetheory/fit-text";
 
 import ContextMenu from "./context-menu/ContextMenu.svelte";
-import { type CardTable } from "../context.svelte";
+import { CardRarity, type CardTable } from "../context.svelte";
 import { file_content, snake_case } from "../helper";
 
 type Props = Omit<CardTable, "id" | "collection_id"> & {
+	collection_index: number,
+	collection_size: number,
 	collection_name: string,
 	collection_blob: string,
 	stat_blob: string,
@@ -17,11 +20,14 @@ type Props = Omit<CardTable, "id" | "collection_id"> & {
 };
 
 let {
+	collection_index,
+	collection_size,
 	collection_name,
 	collection_blob,
 	stat_blob,
 
 	name,
+	rarity,
 	archetypes,
 	description,
 	portrait_blob,
@@ -44,7 +50,7 @@ let description_box = $state<HTMLDivElement>();
 let context_menu = $state<ContextMenu>()!;
 let description_editing = $state(false);
 
-$effect(() => onchange?.({ name, archetypes, cost, attack, life }));
+$effect(() => onchange?.({ name, rarity, archetypes, cost, attack, life }));
 
 $effect(() => {
 	if (!description_holder)
@@ -53,7 +59,6 @@ $effect(() => {
 	fitText({
 		el: description_holder,
 		box: description_box,
-		maxHeightLimit: 184,
 	});
 });
 
@@ -112,6 +117,19 @@ function handle_contextmenu(event: MouseEvent) {
 				</div>
 			</div>
 		{/if}
+	</div>
+	<div class="card-extra-info">
+		<select class="card-rarity clickable" bind:value={rarity}>
+			<option value={CardRarity.Token}>Token</option>
+			<option value={CardRarity.Common}>Commun</option>
+			<option value={CardRarity.Uncommon}>Peu commun</option>
+			<option value={CardRarity.Rare}>Rare</option>
+			<option value={CardRarity.Legendary}>Légendaire</option>
+			<option value={CardRarity.Hero}>Hero</option>
+		</select>
+		<span class="card-indexing">
+			{collection_index}/{collection_size}
+		</span>
 	</div>
 </div>
 
@@ -201,14 +219,13 @@ function handle_contextmenu(event: MouseEvent) {
 	}
 
 	.card-portrait, .card-archetypes, .card-effect {
-		display: block;
-
 		color: inherit;
 		outline: 2px solid var(--card-border, white);
 		width: 312px;
 	}
 
 	.card-portrait {
+		display: block;
 		background-repeat: no-repeat;
 		background-size: 100% 100%;
 
@@ -225,8 +242,16 @@ function handle_contextmenu(event: MouseEvent) {
 	}
 
 	.card-effect {
-		height: 184px;
+		display: flex;
+
+		flex-direction: column;
+		justify-content: center;
+
+		height: 180px;
 		padding: 4px;
+
+		background: none;
+		resize: none;
 
 		font-size: 15px;
 	}
@@ -241,10 +266,35 @@ function handle_contextmenu(event: MouseEvent) {
 
 		gap: 8px;
 
-		background: none;
-		resize: none;
-
 		text-align: justify;
+	}
+
+	.card-extra-info {
+		position: absolute;
+		display: grid;
+
+		grid-template-columns: 1fr 1fr;
+		align-items: center;
+
+		left: 4px;
+		right: 4px;
+		bottom: 2px;
+
+		font-size: 12px;
+	}
+
+	.card-rarity {
+		background: none;
+		color: inherit;
+		width: max-content;
+
+		-moz-appearance:none; /* Firefox */
+		-webkit-appearance:none; /* Safari and Chrome */
+		appearance:none;
+	}
+
+	.card-indexing {
+		text-align: right;
 	}
 
 :global {

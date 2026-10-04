@@ -1,6 +1,6 @@
 <script lang="ts">
 import ColorPicker from "svelte-awesome-color-picker";
-import type { CollectionStyle } from "../context.svelte";
+import { CardRarity, type CollectionStyle } from "../context.svelte";
 import Card from "./Card.svelte";
 
 import { file_content } from "../helper";
@@ -47,11 +47,14 @@ async function set_background(event: Event & { currentTarget: HTMLInputElement }
 
 <div class="card-editor" style:--card-background={css_background} style:--card-border={border_color} style:--card-color={color}>
 	<Card
+		collection_index={1}
+		collection_size={1}
 		{collection_name}
 		{collection_blob}
 		{stat_blob}
 
 		name="Card Name"
+		rarity={CardRarity.Common}
 		archetypes="Archetype1, Archetype2"
 		description="Ceci est une **description** de {'{'}test{'}'}{"\n\n"}atk hp essence"
 		portrait_blob={portrait_placeholder}

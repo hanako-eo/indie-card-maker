@@ -4,7 +4,7 @@ import { fly } from "svelte/transition";
 import { Portal } from "@jsrob/svelte-portal"
 import { Upload, Download, Plus, Pen, Trash, ChevronDown } from '@lucide/svelte';
 
-import { db, type CardTable, type CollectionSerialization, type CollectionStyle, type CollectionTable } from "../context.svelte";
+import { CardRarity, db, type CardTable, type CollectionSerialization, type CollectionStyle, type CollectionTable } from "../context.svelte";
 import CollectionEditor from "./CollectionEditor.svelte";
 import Card from "./Card.svelte";
 import { debounce, download, file_content, prebind } from "../helper";
@@ -42,6 +42,7 @@ function handle_add_card() {
 		collection_id: id,
 
 		name: "Nouvelle Carte",
+		rarity: CardRarity.Common,
 		archetypes: "",
 		description: "",
 		portrait_blob: "",
@@ -53,7 +54,6 @@ function handle_add_card() {
 }
 
 function handle_card_change(id: number, value: Partial<CardTable>) {
-	console.log("pppp")
 	db.cards.update(id, value);
 }
 
@@ -62,6 +62,7 @@ function handle_card_clone(card: Omit<CardTable, "id">) {
 		collection_id: card.collection_id,
 
 		name: card.name,
+		rarity: card.rarity,
 		archetypes: card.archetypes,
 		description: card.description,
 		portrait_blob: card.portrait_blob,
@@ -158,8 +159,10 @@ function handle_editor_close() {
 	</nav>
 	<hr />
 	<section class="cards" style:--card-background={css_background} style:--card-border={style.border_color} style:--card-color={style.color}>
-		{#each $cards as card (card.id)}
+		{#each $cards as card, i (card.id)}
 			<Card
+				collection_index={i + 1}
+				collection_size={size}
 				onchange={debounce((changes) => handle_card_change(card.id, changes), 1000)}
 				onclone={() => handle_card_clone(card)}
 				ondelete={() => handle_card_deletion(card.id)}
