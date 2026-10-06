@@ -94,6 +94,7 @@ function handle_download() {
 
 		cards: $cards.map((card) => ({
 			name: card.name,
+			rarity: card.rarity,
 			archetypes: card.archetypes,
 			description: card.description,
 			portrait_blob: card.portrait_blob,

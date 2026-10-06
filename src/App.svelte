@@ -8,7 +8,7 @@ import ContextMenuProxy from './lib/context-menu/ContextMenuProxy.svelte';
 
 import default_icon_blob from "./assets/default-collection.png"
 import default_stat_blob from "./assets/default-stat.png"
-import { file_content } from './helper';
+import { debounce, file_content } from './helper';
 
 const collections = liveQuery(async () => db.collections.toArray());
 
@@ -49,7 +49,7 @@ async function handle_upload(event: Event & { currentTarget: HTMLInputElement })
 
 {#each $collections as collection (collection.id)}
 	<Collection
-		onchange={(changes) => handle_collection_change(collection.id, changes)}
+		onchange={debounce((changes) => handle_collection_change(collection.id, changes), 1000)}
 		ondelete={() => handle_collection_deletion(collection.id)}
 		{...collection} />
 {/each}
