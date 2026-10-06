@@ -1,5 +1,8 @@
 import type { TokenizerAndRendererExtension } from "marked";
 
+type BaseKeywords = keyof typeof keyword_colors | keyof typeof keywords;
+type SingularKeywords = BaseKeywords | keyof typeof variants;
+
 const keyword_colors = {
 	"essence": "card-cost",
 	"atk": "card-attack",
@@ -14,18 +17,28 @@ const keywords = {
 	"départ précipité": "L'effet associé s'execute lorsque la carte va dans la zone de bannissement.",
 	"début du tour": "L'effet associé s'execute au début du tour juste après la pioche.",
 	"fin du tour": "L'effet associé s'execute à la fin du tour.",
+	"attaque": "L'effet associé s'execute lors que la créature attaque.",
+	"soutient": "L'effet associé s'execute lors qu'une autre créature alliée attaque.",
 
-	"muet": "Plus aucune effets de la carte peuvent être activé.",
-	"paralysie": "Cette créature ne peut plus faire d'attaque.",
-
-	"précision": "Cette créature peut ignorer les créatures ennemis et l'attaque adversaire directement.",
+	"transparence": "Cette créature ne peut pas être ciblé pendant 1 tour.",
+	"paralysie": "Cette créature ne peut plus attaquer.",
+	"tétanisé": "Cette créature ne peut plus attaquer pendant 1 tour.",
+	"muet": "Les effets de la carte ne peuvent plus être activé.",
+	"agressivité": "Cette créature peut ignorer les créatures ennemis et attaquer adversaire directement.",
+	"hâte": "Cette créature peut attaquer lors de son arrivée.",
 	"esquive": "Cette créature peut ignorer 1 fois les dégats qui lui sont addressés.",
 	"provocation": "Cette créature ne peut pas être ignorer lorsqu'une créature ennemie attaque.",
 };
 
-const keywords_string = [...Object.keys(keyword_colors), ...Object.keys(keywords)].join("|");
-const tokenizer = new RegExp(`^(${keywords_string})`, "i");
-const detection = new RegExp(keywords_string, "i");
+const variants = {
+	"muette": "muet",
+};
+
+const keywords_list = [...Object.keys(keyword_colors), ...Object.keys(variants), ...Object.keys(keywords)];
+const plurials = keywords_list.map((s) => s + 's').join("|")
+const singulars = keywords_list.join("|")
+const tokenizer = new RegExp(`^(${plurials}|${singulars})(?![a-z])`, "i");
+const detection = new RegExp(`${plurials}|${singulars}`, "i");
 
 export default {
 	name: "keywords",
@@ -42,7 +55,9 @@ export default {
 		}
 	},
 	renderer(token) {
-		const keyword: keyof typeof keyword_colors | keyof typeof keywords = token.keyword.toLowerCase();
+		const extracted_keyword = (token.keyword as string).toLowerCase().replace(/s$/, "") as SingularKeywords;
+		const keyword = extracted_keyword in variants ? variants[extracted_keyword as keyof typeof variants] : extracted_keyword;
+
 		if (keyword in keyword_colors) {
 			return `<span class="${keyword_colors[keyword as keyof typeof keyword_colors]}">${token.keyword}</span>`;
 		}
