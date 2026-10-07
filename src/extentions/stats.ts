@@ -3,16 +3,16 @@ import type { TokenizerAndRendererExtension } from "marked";
 export default {
 	name: "stats",
 	level: "inline",
-	start(src) { return src.match(/((\+|\-)\d+\/)?(\+|\-)\d+\/(\+|\-)\d+/)?.index; },
+	start(src) { return src.match(/((\+|\-)?\d+\/)?(\+|\-)?\d+\/(\+|\-)?\d+/)?.index; },
 	tokenizer(src, _tokens) {
-		const match = /^((\+|\-)(\d+))?\/?((\+|\-)(\d+))\/((\+|\-)(\d+))/.exec(src);
+		const match = /^((\+|\-)?(\d+))?\/?((\+|\-)?(\d+))\/((\+|\-)?(\d+))/.exec(src);
 		if (match) {
 			return {
 				type: "stats",
 				raw: match[0],
-				cost: !!match[1] ? [match[2], match[3]] : null,
-				atk: [match[5], match[6]],
-				hp: [match[8], match[9]],
+				cost: !!match[1] ? [match[2] ?? "", match[3]] : null,
+				atk: [match[5] ?? "", match[6]],
+				hp: [match[8] ?? "", match[9]],
 			};
 		}
 	},
