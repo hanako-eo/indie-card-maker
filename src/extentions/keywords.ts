@@ -32,6 +32,10 @@ const keywords = {
 
 const variants = {
 	"muette": "muet",
+	"tétanise": "tétanisé",
+	"tétanisée": "tétanisé",
+	"agressivite": "tétanisé",
+	"agressivitée": "tétanisé",
 };
 
 const keywords_list = [...Object.keys(keyword_colors), ...Object.keys(variants), ...Object.keys(keywords)];

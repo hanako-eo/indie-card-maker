@@ -254,6 +254,7 @@ function handle_contextmenu(event: MouseEvent) {
 		resize: none;
 
 		font-size: 15px;
+		text-align: center;
 	}
 
 	.card-effect-holder {
@@ -262,11 +263,11 @@ function handle_contextmenu(event: MouseEvent) {
 		flex-direction: column;
 		flex-wrap: nowrap;
 		justify-content: center;
-		align-items: start;
+		align-items: center;
 
 		gap: 8px;
 
-		text-align: justify;
+		text-align: center;
 	}
 
 	.card-extra-info {
