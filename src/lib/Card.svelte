@@ -302,10 +302,7 @@ function handle_contextmenu(event: MouseEvent) {
 	.card-keyword {
 		text-decoration: underline;
 	}
-	.card-name-effect {
-		color: #BB62F3;
-		font-style: italic;
-	}
+	.card-name-effect { color: #BB62F3; }
 
 	.card-cost { color: #00d0ff; }
 	.card-attack { color: #f0003c; }
