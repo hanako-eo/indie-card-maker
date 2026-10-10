@@ -11,23 +11,23 @@ const keyword_colors = {
 };
 
 const keywords = {
-	"avatar": "L'effet associé s'execute comme Arrivée si la carte et le héros choisi sont les mêmes.",
-	"arrivée": "L'effet associé s'execute lorsque la carte arrive sur le terrain.",
-	"départ": "L'effet associé s'execute lorsque la carte va au cimetière.",
-	"départ précipité": "L'effet associé s'execute lorsque la carte va dans la zone de bannissement.",
-	"début du tour": "L'effet associé s'execute au début du tour juste après la pioche.",
-	"fin du tour": "L'effet associé s'execute à la fin du tour.",
-	"attaque": "L'effet associé s'execute lors que la créature attaque.",
-	"soutient": "L'effet associé s'execute lors qu'une autre créature alliée attaque.",
+	"avatar": "L'effet associé s'exécute comme Arrivée si la carte et le héros choisi sont les mêmes.",
+	"arrivée": "L'effet associé s'exécute lorsque la carte arrive sur le terrain.",
+	"départ": "L'effet associé s'exécute lorsque la carte va au cimetière.",
+	"bannissement": "L'effet associé s'exécute lorsque la carte va dans la zone de bannissement.",
+	"début du tour": "L'effet associé s'exécute au début du tour juste après la pioche.",
+	"fin du tour": "L'effet associé s'exécute à la fin du tour.",
+	"attaque": "L'effet associé s'exécute lorsque la créature attaque.",
+	"soutien": "L'effet associé s'exécute lorsqu'une autre créature alliée attaque.",
 
-	"transparence": "Cette créature ne peut pas être ciblé pendant 1 tour.",
-	"paralysie": "Cette créature ne peut plus attaquer.",
-	"tétanisé": "Cette créature ne peut plus attaquer pendant 1 tour.",
+	"transparence": "Cette créature ne peut pas être ciblée pendant 1 tour.",
+	"paralysie": "Cette créature ne peut pas lancer d'attaque.",
+	"tétanisé": "Cette créature ne peut plus lancer d'attaque pendant 1 tour.",
 	"muet": "Les effets de la carte ne peuvent plus être activé.",
-	"agressivité": "Cette créature peut ignorer les créatures ennemis et attaquer adversaire directement.",
+	"agressivité": "Cette créature peut ignorer les créatures adverses et attaquer l'adversaire directement.",
 	"hâte": "Cette créature peut attaquer lors de son arrivée.",
-	"esquive": "Cette créature peut ignorer 1 fois les dégats qui lui sont addressés.",
-	"provocation": "Cette créature ne peut pas être ignorer lorsqu'une créature ennemie attaque.",
+	"esquive": "Cette créature peut ignorer 1 fois les dégâts qui lui sont adressés.",
+	"provocation": "Cette créature ne peut pas être ignorée lorsqu'une créature ennemie attaque.",
 };
 
 const variants = {
