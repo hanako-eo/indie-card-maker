@@ -45,6 +45,7 @@ function handle_add_card() {
 		rarity: CardRarity.Common,
 		archetypes: "",
 		description: "",
+		avatar_description: null,
 		portrait_blob: "",
 
 		cost: 0,
@@ -65,6 +66,7 @@ function handle_card_clone(card: Omit<CardTable, "id">) {
 		rarity: card.rarity,
 		archetypes: card.archetypes,
 		description: card.description,
+		avatar_description: card.avatar_description,
 		portrait_blob: card.portrait_blob,
 
 		cost: card.cost,
@@ -97,6 +99,7 @@ function handle_download() {
 			rarity: card.rarity,
 			archetypes: card.archetypes,
 			description: card.description,
+			avatar_description: card.avatar_description,
 			portrait_blob: card.portrait_blob,
 
 			cost: card.cost,
@@ -273,10 +276,5 @@ function handle_editor_close() {
 		top: 0;
 		bottom: 0;
 		right: 0;
-	}
-
-	@keyframes collection-closing {
-		0%, 1% { height: fit-content; }
-		100% { height: 64px; }
 	}
 </style>

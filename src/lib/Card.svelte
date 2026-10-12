@@ -30,6 +30,7 @@ let {
 	rarity,
 	archetypes,
 	description,
+	avatar_description,
 	portrait_blob,
 
 	cost,
@@ -42,12 +43,17 @@ let {
 }: Props = $props();
 
 const parsed_description = $derived(marked.parse(description));
+const parsed_avatar_description = $derived(marked.parse(avatar_description ?? ""));
 const reactive = $derived(!!onclone || !!ondelete);
 
 let description_holder = $state<HTMLDivElement>();
 let description_box = $state<HTMLDivElement>();
 
+let avatar_description_holder = $state<HTMLDivElement>();
+let avatar_description_box = $state<HTMLDivElement>();
+
 let context_menu = $state<ContextMenu>()!;
+let avatar_description_editing = $state(false);
 let description_editing = $state(false);
 
 $effect(() => onchange?.({ name, rarity, archetypes, cost, attack, life }));
@@ -59,6 +65,20 @@ $effect(() => {
 	fitText({
 		el: description_holder,
 		box: description_box,
+
+		minFontSize: () => 8
+	});
+});
+
+$effect(() => {
+	if (!avatar_description_holder)
+		return;
+
+	fitText({
+		el: avatar_description_holder,
+		box: avatar_description_box,
+
+		minFontSize: () => 8
 	});
 });
 
@@ -70,10 +90,18 @@ async function show_image(event: Event & { currentTarget: HTMLInputElement }) {
 	onchange?.({ portrait_blob });
 }
 
-function handle_dblclick() {
+function handle_dblclick(e: MouseEvent) {
 	if (!reactive) return;
+	e.stopImmediatePropagation()
 
 	description_editing = true;
+}
+
+function handle_avatar_dblclick(e: MouseEvent) {
+	if (!reactive) return;
+	e.stopImmediatePropagation()
+
+	avatar_description_editing = true;
 }
 
 function handle_blur() {
@@ -81,6 +109,13 @@ function handle_blur() {
 
 	onchange?.({ description });
 	description_editing = false;
+}
+
+function handle_avatar_blur() {
+	if (!reactive) return;
+
+	onchange?.({ avatar_description });
+	avatar_description_editing = false;
 }
 
 function handle_contextmenu(event: MouseEvent) {
@@ -108,14 +143,45 @@ function handle_contextmenu(event: MouseEvent) {
 			<label><input type="file" name="portrait" accept="image/*" onchange={show_image} /></label>
 		</div>
 		<input class="card-archetypes" placeholder="Archetypes" bind:value={archetypes} />
-		{#if description_editing}
-			<textarea class="card-effect" autofocus bind:value={description} onblur={handle_blur}></textarea>
-		{:else}
-			<div class="card-effect" ondblclick={handle_dblclick} role="contentinfo" bind:this={description_box}>
-				<div class="card-effect-holder" bind:this={description_holder}>
-					{@html parsed_description}
-				</div>
+		{#if rarity == CardRarity.Hero}
+			<div class="card-effect-hero" ondblclick={handle_dblclick} role="contentinfo">
+				{#if description_editing}
+					<textarea class="card-effect" autofocus bind:value={description} onblur={handle_blur}></textarea>
+				{:else}
+					<div class="card-effect" ondblclick={handle_dblclick} role="contentinfo">
+						<h3 class="card-avatar-keyword" title="Les effets s'exécuteront même si la carte et le héros choisi ne sont pas les mêmes.">Normal</h3>
+						<hr />
+						<div class="card-effect-box" bind:this={description_box}>
+							<div class="card-effect-holder" bind:this={description_holder}>
+								{@html parsed_description}
+							</div>
+						</div>
+					</div>
+				{/if}
+				{#if avatar_description_editing}
+					<textarea class="card-effect" autofocus bind:value={avatar_description} onblur={handle_avatar_blur}></textarea>
+				{:else}
+					<div class="card-effect" ondblclick={handle_avatar_dblclick} role="contentinfo">
+						<h3 class="card-avatar-keyword" title="Les effets s'exécuteront si la carte et le héros choisi sont les mêmes.">Avatar</h3>
+						<hr />
+						<div class="card-effect-box" bind:this={avatar_description_box}>
+							<div class="card-effect-holder" bind:this={avatar_description_holder}>
+								{@html parsed_avatar_description}
+							</div>
+						</div>
+					</div>
+				{/if}
 			</div>
+		{:else}
+			{#if description_editing}
+				<textarea class="card-effect" autofocus bind:value={description} onblur={handle_blur}></textarea>
+			{:else}
+				<div class="card-effect" ondblclick={handle_dblclick} role="contentinfo" bind:this={description_box}>
+					<div class="card-effect-holder" bind:this={description_holder}>
+						{@html parsed_description}
+					</div>
+				</div>
+			{/if}
 		{/if}
 	</div>
 	<div class="card-extra-info">
@@ -125,7 +191,7 @@ function handle_contextmenu(event: MouseEvent) {
 			<option value={CardRarity.Uncommon}>Peu commun</option>
 			<option value={CardRarity.Rare}>Rare</option>
 			<option value={CardRarity.Legendary}>Légendaire</option>
-			<option value={CardRarity.Hero}>Hero</option>
+			<option value={CardRarity.Hero}>Héros</option>
 		</select>
 		<span class="card-indexing">
 			{collection_index}/{collection_size}
@@ -143,6 +209,12 @@ function handle_contextmenu(event: MouseEvent) {
 </ContextMenu>
 
 <style>
+	hr {
+		margin: 4px 0;
+
+		border: 1px solid var(--card-border, white);
+	}
+
 	.card {
 		position: relative;
 		display: inline-block;
@@ -224,6 +296,22 @@ function handle_contextmenu(event: MouseEvent) {
 		width: 312px;
 	}
 
+	.card-effect-hero {
+		display: grid;
+
+		gap: 2px;
+
+		outline: 2px solid var(--card-border, white);
+		grid-template-columns: 1fr 1fr;
+	}
+	.card-effect-hero .card-effect {
+		width: calc((312px - 2px) / 2);
+	}
+
+	.card-avatar-effect {
+		width: 100%;
+	}
+
 	.card-portrait {
 		display: block;
 		background-repeat: no-repeat;
@@ -255,6 +343,11 @@ function handle_contextmenu(event: MouseEvent) {
 
 		font-size: 15px;
 		text-align: center;
+	}
+
+	.card-effect-box {
+		width: 100%;
+		height: 100%;
 	}
 
 	.card-effect-holder {
@@ -299,9 +392,7 @@ function handle_contextmenu(event: MouseEvent) {
 	}
 
 :global {
-	.card-keyword {
-		text-decoration: underline;
-	}
+	.card-keyword, .card-avatar-keyword { text-decoration: underline; }
 	.card-name-effect { color: #BB62F3; }
 
 	.card-cost { color: #00d0ff; }

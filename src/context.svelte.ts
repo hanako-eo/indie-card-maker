@@ -40,6 +40,10 @@ type CardTableV2 = CardTableV1 & {
 	archetypes: string,
 }
 
+type CardTableV3 = CardTableV2 & {
+	rarity: CardRarity,
+}
+
 export enum CardRarity {
 	Token = "token",
 	Common = "common",
@@ -48,8 +52,8 @@ export enum CardRarity {
 	Legendary = "legendary",
 	Hero = "hero",
 }
-export type CardTable = CardTableV2 & {
-	rarity: CardRarity,
+export type CardTable = CardTableV3 & {
+	avatar_description: string | null,
 }
 
 export type CollectionSerialization = Omit<CollectionTable, "id"> & {
@@ -91,5 +95,13 @@ db.version(3).stores({
 }).upgrade(async (tx) => {
 	await tx.table<Migrate<CardTableV2, CardTable>>("cards").toCollection().modify((card) => {
 		card.rarity = CardRarity.Common;
+	});
+});
+
+db.version(4).stores({
+	cards: "++id, collection_id, name, rarity, archetypes, description, avatar_description, portrait_blob, cost, attack, life",
+}).upgrade(async (tx) => {
+	await tx.table<Migrate<CardTableV3, CardTable>>("cards").toCollection().modify((card) => {
+		card.avatar_description = null;
 	});
 });
