@@ -66,7 +66,7 @@ $effect(() => {
 		el: description_holder,
 		box: description_box,
 
-		minFontSize: () => 8
+		minFontSize: () => 7
 	});
 });
 
@@ -78,7 +78,7 @@ $effect(() => {
 		el: avatar_description_holder,
 		box: avatar_description_box,
 
-		minFontSize: () => 8
+		minFontSize: () => 7
 	});
 });
 
@@ -145,32 +145,32 @@ function handle_contextmenu(event: MouseEvent) {
 		<input class="card-archetypes" placeholder="Archetypes" bind:value={archetypes} />
 		{#if rarity == CardRarity.Hero}
 			<div class="card-effect-hero" ondblclick={handle_dblclick} role="contentinfo">
-				{#if description_editing}
-					<textarea class="card-effect" autofocus bind:value={description} onblur={handle_blur}></textarea>
-				{:else}
-					<div class="card-effect" ondblclick={handle_dblclick} role="contentinfo">
-						<h3 class="card-avatar-keyword" title="Les effets s'exécuteront même si la carte et le héros choisi ne sont pas les mêmes.">Normal</h3>
-						<hr />
-						<div class="card-effect-box" bind:this={description_box}>
+				<div class="card-effect" ondblclick={handle_dblclick} role="contentinfo">
+					<h3 class="card-avatar-keyword" title="Les effets s'exécuteront même si la carte et le héros choisi ne sont pas les mêmes.">Normal</h3>
+					<hr />
+					<div class="card-effect-box" bind:this={description_box}>
+						{#if description_editing}
+							<textarea class="card-effect-holder" autofocus bind:value={description} onblur={handle_blur}></textarea>
+						{:else}
 							<div class="card-effect-holder" bind:this={description_holder}>
 								{@html parsed_description}
 							</div>
-						</div>
+						{/if}
 					</div>
-				{/if}
-				{#if avatar_description_editing}
-					<textarea class="card-effect" autofocus bind:value={avatar_description} onblur={handle_avatar_blur}></textarea>
-				{:else}
-					<div class="card-effect" ondblclick={handle_avatar_dblclick} role="contentinfo">
-						<h3 class="card-avatar-keyword" title="Les effets s'exécuteront si la carte et le héros choisi sont les mêmes.">Avatar</h3>
-						<hr />
-						<div class="card-effect-box" bind:this={avatar_description_box}>
+				</div>
+				<div class="card-effect" ondblclick={handle_avatar_dblclick} role="contentinfo">
+					<h3 class="card-avatar-keyword" title="Les effets s'exécuteront si la carte et le héros choisi sont les mêmes.">Avatar</h3>
+					<hr />
+					<div class="card-effect-box" bind:this={avatar_description_box}>
+						{#if avatar_description_editing}
+							<textarea class="card-effect-holder" autofocus bind:value={avatar_description} onblur={handle_avatar_blur}></textarea>
+						{:else}
 							<div class="card-effect-holder" bind:this={avatar_description_holder}>
 								{@html parsed_avatar_description}
 							</div>
-						</div>
+						{/if}
 					</div>
-				{/if}
+				</div>
 			</div>
 		{:else}
 			{#if description_editing}
@@ -245,7 +245,6 @@ function handle_contextmenu(event: MouseEvent) {
 		width: 252px;
 		height: 40px;
 
-		color: inherit;
 		font-size: 24px;
 		text-align: center;
 		text-fit: shrink;
@@ -291,7 +290,6 @@ function handle_contextmenu(event: MouseEvent) {
 	}
 
 	.card-portrait, .card-archetypes, .card-effect {
-		color: inherit;
 		outline: 2px solid var(--card-border, white);
 		width: 312px;
 	}
@@ -346,8 +344,16 @@ function handle_contextmenu(event: MouseEvent) {
 	}
 
 	.card-effect-box {
+		display: flex;
+
+		flex-direction: column;
+		justify-content: center;
+
 		width: 100%;
 		height: 100%;
+
+
+		font-size: 14px;
 	}
 
 	.card-effect-holder {
@@ -360,7 +366,15 @@ function handle_contextmenu(event: MouseEvent) {
 
 		gap: 8px;
 
+		background: none;
+		resize: none;
+
 		text-align: center;
+	}
+
+	textarea.card-effect-holder {
+		width: 100%;
+		height: 100%;
 	}
 
 	.card-extra-info {
@@ -379,7 +393,6 @@ function handle_contextmenu(event: MouseEvent) {
 
 	.card-rarity {
 		background: none;
-		color: inherit;
 		width: max-content;
 
 		-moz-appearance:none; /* Firefox */

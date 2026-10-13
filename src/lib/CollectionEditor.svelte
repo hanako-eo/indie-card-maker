@@ -57,6 +57,7 @@ async function set_background(event: Event & { currentTarget: HTMLInputElement }
 		rarity={CardRarity.Common}
 		archetypes="Archetype1, Archetype2"
 		description="Ceci est une **description** de {'{'}test{'}'}{"\n\n"}atk hp essence"
+		avatar_description="Ceci est une **description** de {'{'}test{'}'}{"\n\n"}atk hp essence"
 		portrait_blob={portrait_placeholder}
 
 		cost={8}

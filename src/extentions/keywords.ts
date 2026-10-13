@@ -11,7 +11,7 @@ const keyword_colors = {
 };
 
 const keywords = {
-	"avatar": "L'effet associé s'exécute comme Arrivée si la carte et le héros choisi sont les mêmes.",
+	// "avatar": "L'effet associé s'exécute comme Arrivée si la carte et le héros choisi sont les mêmes.",
 	"arrivée": "L'effet associé s'exécute lorsque la carte arrive sur le terrain.",
 	"départ": "L'effet associé s'exécute lorsque la carte va au cimetière.",
 	"bannissement": "L'effet associé s'exécute lorsque la carte va dans la zone de bannissement.",

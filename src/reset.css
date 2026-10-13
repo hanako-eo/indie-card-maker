@@ -26,6 +26,7 @@ input, button, textarea, select{
 	border: 0;
 	font-size: 100%;
 	font: inherit;
+	color: inherit;
 	vertical-align: baseline;
 }
 /* HTML5 display-role reset for older browsers */
