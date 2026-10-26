@@ -167,7 +167,7 @@ function handle_editor_close() {
 			<Card
 				collection_index={i + 1}
 				collection_size={size}
-				onchange={debounce((changes) => handle_card_change(card.id, changes), 1000)}
+				onchange={debounce((changes) => handle_card_change(card.id, changes), 100)}
 				onclone={() => handle_card_clone(card)}
 				ondelete={() => handle_card_deletion(card.id)}
 				collection_name={name}

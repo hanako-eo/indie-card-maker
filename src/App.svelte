@@ -49,7 +49,7 @@ async function handle_upload(event: Event & { currentTarget: HTMLInputElement })
 
 {#each $collections as collection (collection.id)}
 	<Collection
-		onchange={debounce((changes) => handle_collection_change(collection.id, changes), 1000)}
+		onchange={debounce((changes) => handle_collection_change(collection.id, changes), 100)}
 		ondelete={() => handle_collection_deletion(collection.id)}
 		{...collection} />
 {/each}
